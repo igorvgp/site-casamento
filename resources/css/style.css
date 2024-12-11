@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');  */
+
+[class^=title] {
+    font-family: 'Annie Use Your Telescope', sans-serif !important;
+    /* font-family: 'Love Ya Like A Sister', sans-serif !important; */
+    font-size: 46px;
+    font-weight: 750;
+    color: #091747;
+}
+
+[class^=citation] {
+    font-family: 'Annie Use Your Telescope', sans-serif !important;
+    /* font-family: 'Love Ya Like A Sister', sans-serif !important; */
+    font-size: 32px;
+    font-weight: 650;
+    color: #f0684a;
+}
+
+/* (Almost) Everything */
+[class^=st-emotion] {
+    font-family: 'Annie Use Your Telescope', sans-serif !important;
+    /* font-family: 'Love Ya Like A Sister', sans-serif !important; */
+    font-size: 23px;
+    font-weight: 550;
+    color: #091747;
+}
+
+/* Title of dialog */
+[class^=st-br] {
+    font-family: 'Annie Use Your Telescope', sans-serif !important;
+    /* font-family: 'Love Ya Like A Sister', sans-serif !important; */
+    font-size: 26px;
+    font-weight: 600;
+    color: #091747;
+}
+
+[class^=iban] {
+    font-family: 'Annie Use Your Telescope', sans-serif !important;
+    /* font-family: 'Love Ya Like A Sister', sans-serif !important; */
+    font-size: 25px;
+    font-weight: 600;
+    color: #091747;
+}
+
+div[data-testid="InputInstructions"] > span:nth-child(1) {
+    visibility: hidden;
+}
