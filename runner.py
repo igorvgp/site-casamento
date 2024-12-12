@@ -10,7 +10,7 @@ import pandas as pd
 local_path = os.getcwd()
 
 # Configurar as credenciais do sheets
-credentials_file = os.path.join(local_path, "settings", "credentials.json")
+credentials_file = os.path.join(local_path, "settings", "google_creds.json")
 
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets",
