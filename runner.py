@@ -18,6 +18,7 @@ scopes = [
 ]
 credentials = Credentials.from_service_account_file(credentials_file, scopes=scopes)
 client = gspread.authorize(credentials)
+print("OKKKKK")
 
 # Abrir a planilha
 spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVCIIAeElyKrw3TYwhgqoygGxyWWg0dEI6Um4AZk/edit?usp=sharing")
