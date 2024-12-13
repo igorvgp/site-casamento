@@ -253,7 +253,7 @@ def confirmar_presenca(spreadsheet):
     st.divider() 
 
     # Mosaico de fotos
-    exibir_mosaico("resources\images\mosaico\permitidos", link_font, font_name)
+    exibir_mosaico(os.getcwd()+"/resources/images/mosaico/permitidos", link_font, font_name)
 
     add_names_button = st.button(
         "Confirmar Presença", use_container_width=True
