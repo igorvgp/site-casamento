@@ -173,7 +173,7 @@ def exibir_mosaico(image_folder, link_font, font_name):
         # Criar o mosaico
         mosaic_width = cells_per_row * cell_size
         mosaic_height = ceil(total_images / cells_per_row) * cell_size
-        mosaic = Image.new('RGB', (mosaic_width, mosaic_height), (255, 255, 255))  # Fundo branco
+        mosaic = Image.new('RGB', (mosaic_width, mosaic_height), (0, 0, 0))  # Fundo branco
         
         for idx, img in enumerate(resized_images):
             x = (idx % cells_per_row) * cell_size
