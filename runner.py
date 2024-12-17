@@ -38,10 +38,17 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVC
 #lista_presentes(spreadsheet)
 
 #####################################
+
+def page_lista_presentes():
+    lista_presentes(spreadsheet)
+
+def page_confirmar_presenca():
+    confirmar_presenca(spreadsheet)
+
 pages = {
     "Páginas": [
-        st.Page(lista_presentes(spreadsheet), title="Presenteie o casal"),
-        st.Page(confirmar_presenca(spreadsheet), title="Confirme sua presença"),
+        st.Page(page_lista_presentes, title="Presenteie o casal"),
+        st.Page(page_confirmar_presenca, title="Confirme sua presença"),
     ],
 }
 
