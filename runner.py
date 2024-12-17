@@ -58,12 +58,40 @@ pages = {
     ],
 }
 
+# Markdown para alterar a cor de fundo do sidebar
 st.markdown(
     """
     <style>
     [data-testid="stSidebar"] {
         background-color: #ffffff !important; /* Change this to your preferred color */
         opacity: 1 !important; /* Ensure full opacity */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Adicionando CSS para estilizar o botão do sidebar
+st.markdown(
+    """
+    <style>
+    /* Estiliza o botão de toggle (seta para esconder/mostrar o sidebar) */
+    [data-testid="collapsedControl"] {
+        background-color: #007bff !important; /* Azul de destaque */
+        border-radius: 50% !important; /* Deixa o botão circular */
+        width: 40px !important; /* Aumenta o tamanho do botão */
+        height: 40px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white !important; /* Texto ou ícone branco */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra */
+        font-size: 18px !important; /* Aumenta o ícone */
+    }
+    /* Adiciona animação ao passar o mouse */
+    [data-testid="collapsedControl"]:hover {
+        background-color: #0056b3 !important; /* Cor mais escura no hover */
+        cursor: pointer;
     }
     </style>
     """,
