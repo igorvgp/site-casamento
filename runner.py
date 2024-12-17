@@ -72,33 +72,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Adicionando CSS para estilizar o botão do sidebar
-st.markdown(
-    """
-    <style>
-    /* Estiliza o botão de toggle (seta) para visibilidade */
-    [data-testid="collapsedControl"] {
-        background-color: #007bff !important; /* Cor azul de destaque */
-        border-radius: 50% !important; /* Botão circular */
-        width: 50px !important; /* Aumenta a largura */
-        height: 50px !important; /* Aumenta a altura */
-        color: white !important; /* Cor do ícone */
-        font-size: 20px !important; /* Aumenta o tamanho do ícone */
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para destaque */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    /* Hover para o botão */
-    [data-testid="collapsedControl"]:hover {
-        background-color: #0056b3 !important; /* Azul mais escuro no hover */
-        cursor: pointer; /* Mostra o cursor como pointer */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
 pg = st.navigation(pages)
 pg.run()
 
