@@ -41,6 +41,9 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVC
 def pagina_inicial():
     st.title("Página Inicial (não criada)")
 
+def deixe_uma_mensagem():
+    st.title("Deixe uma mensagem (não criada)")   
+
 def page_lista_presentes():
     lista_presentes(spreadsheet)
 
@@ -54,6 +57,18 @@ pages = {
         st.Page(page_confirmar_presenca, title="Confirme sua presença"),
     ],
 }
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: #ffffff !important; /* Change this to your preferred color */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 pg = st.navigation(pages)
 pg.run()
