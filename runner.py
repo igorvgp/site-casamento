@@ -55,7 +55,7 @@ pages = {
         st.Page(pagina_inicial, title="Página Inicial"),
         st.Page(page_lista_presentes, title="Presenteie o casal"),
         st.Page(page_confirmar_presenca, title="Confirme sua presença"),
-        st.Page(deixe_uma_mensagem, title="Página Inicial")
+        st.Page(deixe_uma_mensagem, title="Deixe uma mensagem")
     ],
 }
 
@@ -76,23 +76,23 @@ st.markdown(
 st.markdown(
     """
     <style>
-    /* Estiliza o botão de toggle (seta para esconder/mostrar o sidebar) */
+    /* Estiliza o botão de toggle (seta) para visibilidade */
     [data-testid="collapsedControl"] {
-        background-color: #007bff !important; /* Azul de destaque */
-        border-radius: 50% !important; /* Deixa o botão circular */
-        width: 40px !important; /* Aumenta o tamanho do botão */
-        height: 40px !important;
+        background-color: #007bff !important; /* Cor azul de destaque */
+        border-radius: 50% !important; /* Botão circular */
+        width: 50px !important; /* Aumenta a largura */
+        height: 50px !important; /* Aumenta a altura */
+        color: white !important; /* Cor do ícone */
+        font-size: 20px !important; /* Aumenta o tamanho do ícone */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para destaque */
         display: flex;
-        align-items: center;
         justify-content: center;
-        color: white !important; /* Texto ou ícone branco */
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra */
-        font-size: 18px !important; /* Aumenta o ícone */
+        align-items: center;
     }
-    /* Adiciona animação ao passar o mouse */
+    /* Hover para o botão */
     [data-testid="collapsedControl"]:hover {
-        background-color: #0056b3 !important; /* Cor mais escura no hover */
-        cursor: pointer;
+        background-color: #0056b3 !important; /* Azul mais escuro no hover */
+        cursor: pointer; /* Mostra o cursor como pointer */
     }
     </style>
     """,
