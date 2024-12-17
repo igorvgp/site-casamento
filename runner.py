@@ -38,21 +38,30 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVC
 #lista_presentes(spreadsheet)
 
 #####################################
+pages = {
+    "Páginas": [
+        st.Page(lista_presentes(spreadsheet), title="Presenteie o casal"),
+        st.Page(confirmar_presenca(spreadsheet), title="Confirme sua presença"),
+    ],
+}
+
+pg = st.navigation(pages)
+pg.run()
 
 # Configurar as opções do sidebar
-st.sidebar.title("Navegação")
-opcao = st.sidebar.selectbox(
-    "Escolha uma página:",  # Texto do selectbox
-    ["Página Inicial", "Lista de Presentes", "Confirmar Presença"]  # Opções disponíveis
-)
+# st.sidebar.title("Navegação")
+# opcao = st.sidebar.selectbox(
+#     "Escolha uma página:",  # Texto do selectbox
+#     ["Página Inicial", "Lista de Presentes", "Confirmar Presença"]  # Opções disponíveis
+# )
 
-# Renderizar a página com base na seleção
-if opcao == "Página Inicial":
-    st.title("Bem-vindo ao Site de Casamento")
-    st.write("Aqui você encontra todas as informações sobre nosso casamento.")
+# # Renderizar a página com base na seleção
+# if opcao == "Página Inicial":
+#     st.title("Bem-vindo ao Site de Casamento")
+#     st.write("Aqui você encontra todas as informações sobre nosso casamento.")
     
-elif opcao == "Lista de Presentes":
-    lista_presentes(spreadsheet)
+# elif opcao == "Lista de Presentes":
+#     lista_presentes(spreadsheet)
 
-elif opcao == "Confirmar Presença":
-    confirmar_presenca(spreadsheet)
+# elif opcao == "Confirmar Presença":
+#     confirmar_presenca(spreadsheet)
