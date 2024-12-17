@@ -55,6 +55,7 @@ pages = {
         st.Page(pagina_inicial, title="Página Inicial"),
         st.Page(page_lista_presentes, title="Presenteie o casal"),
         st.Page(page_confirmar_presenca, title="Confirme sua presença"),
+        st.Page(deixe_uma_mensagem, title="Página Inicial")
     ],
 }
 
