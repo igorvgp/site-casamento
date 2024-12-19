@@ -56,18 +56,24 @@ def handle_button_click(
         if ok:
             if len(mensagem) > 0:
                 with st.spinner("Executando envio..."):
-                    pass
-                    worksheet_mensagens = spreadsheet.worksheet("Mensagens")
-                    data_mensagens = worksheet_mensagens.get_all_records()
-                    df_mensagens = pd.DataFrame(data_mensagens)    
-                    #df_mensagens = pd.read_csv('data/mensagens.csv', sep = ';')
-                    df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
-                    df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
-                    # Inserir dados de mensagens no google sheets
-                    worksheet_mensagens = spreadsheet.worksheet('Mensagens')
-                    df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
-                    worksheet_mensagens.update("A1", df_mensagens_list)
-            st.rerun()
+                    try:
+                        worksheet_mensagens = spreadsheet.worksheet("Mensagens")
+                        data_mensagens = worksheet_mensagens.get_all_records()
+                        df_mensagens = pd.DataFrame(data_mensagens)
+                        df_nova_mensagem = pd.DataFrame({
+                            'timestamp': [str(datetime.now())],
+                            'nome': [nome],
+                            'mensagem': [mensagem]
+                        })
+                        df_mensagens = pd.concat([df_mensagens, df_nova_mensagem], ignore_index=True)
+                        
+                        # Inserir dados de mensagens no Google Sheets
+                        df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
+                        worksheet_mensagens.update("A1", df_mensagens_list)
+                        
+                        st.success("Mensagem enviada com sucesso!")
+                    except Exception as e:
+                        st.error(f"Erro ao enviar mensagem: {e}")
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
