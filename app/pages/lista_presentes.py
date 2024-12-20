@@ -47,13 +47,13 @@ def handle_button_click(image_path, spreadsheet):
         st.title("Deixe sua mensagem de carinho")
         st.write("(opcional)")
 
-        nome = st.text_area("Digite seu nome")
+        nome = st.text_area("Digite seu nome", key = 'name')
         
         # Usando o session_state para armazenar a mensagem e garantir atualização
         if "mensagem" not in st.session_state:
             st.session_state.mensagem = ""
 
-        st.session_state.mensagem = st.text_area("Digite sua mensagem", value=st.session_state.mensagem, height  = 200)
+        st.session_state.mensagem = st.text_area("Digite sua mensagem", value=st.session_state.mensagem, height  = 200, key = 'message')
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
         
