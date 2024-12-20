@@ -4,7 +4,7 @@ import streamlit as st
 from datetime import datetime
 
 @st.dialog("Presentear")
-def handle_button_click(
+ef handle_button_click(
     image_path, spreadsheet
 #    db_conn: PostgresqlDatabaseConnector
 ):
