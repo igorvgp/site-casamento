@@ -55,27 +55,27 @@ def handle_button_click(
         ok = st.form_submit_button("Enviar", use_container_width=True)
         n = 0
         if ok:
-            if n == 0:
-                if len(nome) == 0:
-                    st.rerun()
-                elif len(nome) > 0 and len(mensagem) > 0:
-                    with st.spinner("Executando envio..."):
-                        pass
-                        worksheet_mensagens = spreadsheet.worksheet("Mensagens")
-                        data_mensagens = worksheet_mensagens.get_all_records()
-                        df_mensagens = pd.DataFrame(data_mensagens)    
-                        df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
-                        df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
-                        # Inserir dados de mensagens no google sheets
-                        worksheet_mensagens = spreadsheet.worksheet('Mensagens')
-                        df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
-                        worksheet_mensagens.update("A1", df_mensagens_list)
-                    st.rerun()
-                else:
-                    st.write("Toque em 'enviar' novamente")
-                    n = 1
-            else:
+            if len(nome) == 0:
                 st.rerun()
+            elif len(nome) > 0 and len(mensagem) > 0 and n == 0:
+                with st.spinner("Executando envio..."):
+                    pass
+                    worksheet_mensagens = spreadsheet.worksheet("Mensagens")
+                    data_mensagens = worksheet_mensagens.get_all_records()
+                    df_mensagens = pd.DataFrame(data_mensagens)    
+                    df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
+                    df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
+                    # Inserir dados de mensagens no google sheets
+                    worksheet_mensagens = spreadsheet.worksheet('Mensagens')
+                    df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
+                    worksheet_mensagens.update("A1", df_mensagens_list)
+                st.rerun()
+            elif len(nome) > 0 and len(mensagem) > 0 and n != 0:
+                st.rerun()
+            else:
+                st.write("Toque em 'enviar' novamente")
+                n = 1
+
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
