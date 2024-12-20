@@ -49,11 +49,22 @@ def handle_button_click(
         st.title("Deixe sua mensagem de carinho")
         st.write("(opcional)")
 
+        # Inicialização de variáveis no estado da sessão
+        if "nome" not in st.session_state:
+            st.session_state["nome"] = ""
+        if "mensagem" not in st.session_state:
+            st.session_state["mensagem"] = ""
+
+        # Sincronização explícita com estado da sessão
+        def sincronizar_dados():
+            st.session_state["nome"] = st.session_state.get("nome_input", "")
+            st.session_state["mensagem"] = st.session_state.get("mensagem_input", "")
+
         with st.form("form_envio"):
-            nome = st.text_input("Nome")
-            mensagem = st.text_input("Mensagem (opcional)")
-            ok = st.form_submit_button("Enviar", use_container_width=True)
-            
+            nome = st.text_input("Nome", key="nome_input")
+            mensagem = st.text_input("Mensagem (opcional)", key="mensagem_input")
+            ok = st.form_submit_button("Enviar", use_container_width=True, on_click=sincronizar_dados)
+
         if ok:
             with st.spinner("Executando envio..."):
                 try:
@@ -64,8 +75,8 @@ def handle_button_click(
                     # Nova mensagem com possibilidade de campo vazio
                     df_nova_mensagem = pd.DataFrame({
                         'timestamp': [str(datetime.now())],
-                        'nome': [nome if nome else "Anônimo"],  # Nome padrão se vazio
-                        'mensagem': [mensagem]  # Campo de mensagem opcional
+                        'nome': [st.session_state["nome"] if st.session_state["nome"] else "Anônimo"],  # Nome padrão se vazio
+                        'mensagem': [st.session_state["mensagem"]]  # Campo de mensagem opcional
                     })
 
                     # Concatenar e atualizar
@@ -76,7 +87,7 @@ def handle_button_click(
                     st.success("Mensagem enviada com sucesso!")
                 except Exception as e:
                     st.error(f"Erro ao enviar mensagem: {e}")
-
+                    
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
