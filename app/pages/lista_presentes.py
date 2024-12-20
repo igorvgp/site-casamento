@@ -50,7 +50,7 @@ def handle_button_click(
         st.write("(opcional)")
 
         nome = st.text_input("Digite seu nome")
-        mensagem = st.input("Digite sua mensagem")
+        mensagem = st.text_input("Digite sua mensagem")
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
         if ok:
