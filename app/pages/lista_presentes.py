@@ -62,7 +62,6 @@ def handle_button_click(
                     worksheet_mensagens = spreadsheet.worksheet("Mensagens")
                     data_mensagens = worksheet_mensagens.get_all_records()
                     df_mensagens = pd.DataFrame(data_mensagens)    
-                    #df_mensagens = pd.read_csv('data/mensagens.csv', sep = ';')
                     df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
                     df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
                     # Inserir dados de mensagens no google sheets
