@@ -69,7 +69,7 @@ def handle_button_click(
                     worksheet_mensagens = spreadsheet.worksheet('Mensagens')
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
-            st.rerun()
+                st.rerun()
             else:
                 pass
 
