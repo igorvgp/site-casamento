@@ -56,7 +56,6 @@ def handle_button_click(
         n = 0
         if ok:
             if n == 0:
-                n += 1
                 if len(nome) == 0:
                     st.rerun()
                 elif len(nome) > 0 and len(mensagem) > 0:
@@ -74,6 +73,7 @@ def handle_button_click(
                     st.rerun()
                 else:
                     st.write("Toque em 'enviar' novamente")
+                    n = 1
             else:
                 st.rerun()
 
