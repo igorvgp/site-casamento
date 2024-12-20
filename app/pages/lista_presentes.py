@@ -71,7 +71,7 @@ def handle_button_click(
                     worksheet_mensagens.update("A1", df_mensagens_list)
                 st.rerun()
             else:
-                pass
+                st.write("Toque em 'enviar' novamente")
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
