@@ -54,20 +54,23 @@ def handle_button_click(
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
         if ok:
-            if len(mensagem) > 0:
+            if len(nome) == 0:
+                st.rerun()
+            elif len(nome) > 0 and len(mensagem) > 0:
                 with st.spinner("Executando envio..."):
                     pass
                     worksheet_mensagens = spreadsheet.worksheet("Mensagens")
                     data_mensagens = worksheet_mensagens.get_all_records()
                     df_mensagens = pd.DataFrame(data_mensagens)    
-                    #df_mensagens = pd.read_csv('data/mensagens.csv', sep = ';')
                     df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
                     df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
                     # Inserir dados de mensagens no google sheets
                     worksheet_mensagens = spreadsheet.worksheet('Mensagens')
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
-            st.rerun()
+                st.rerun()
+            else:
+                st.write("Toque em 'enviar' novamente")
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
@@ -117,7 +120,7 @@ def render_product(image_path, name, price, key, link_font, font_name, spreadshe
     st.markdown(html_content, unsafe_allow_html=True)
 
     button_key = f"gift_button_{key}"  # Chave única por produto
-    button_present = st.button("Presentear", key=button_key)
+    button_present = st.button("Presentear", key=button_key, use_container_width = True)
 
     st.markdown("""
         <style>
