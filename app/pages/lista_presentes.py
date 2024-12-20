@@ -53,29 +53,21 @@ def handle_button_click(
         mensagem = st.text_area("Digite sua mensagem")
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
-        
         if ok:
-            with st.spinner("Executando envio..."):
-                try:
-                    worksheet_mensagens = spreadsheet["worksheet"]("Mensagens")
+            if len(mensagem) > 0:
+                with st.spinner("Executando envio..."):
+                    pass
+                    worksheet_mensagens = spreadsheet.worksheet("Mensagens")
                     data_mensagens = worksheet_mensagens.get_all_records()
-                    df_mensagens = pd.DataFrame(data_mensagens)
-
-                    # Nova mensagem com possibilidade de campo vazio
-                    df_nova_mensagem = pd.DataFrame({
-                        'timestamp': [str(datetime.now())],
-                        'nome': [nome if nome else "Anônimo"],  # Nome padrão se vazio
-                        'mensagem': [mensagem]  # Campo de mensagem opcional
-                    })
-
-                    # Concatenar e atualizar
-                    df_mensagens = pd.concat([df_mensagens, df_nova_mensagem], ignore_index=True)
+                    df_mensagens = pd.DataFrame(data_mensagens)    
+                    #df_mensagens = pd.read_csv('data/mensagens.csv', sep = ';')
+                    df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
+                    df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
+                    # Inserir dados de mensagens no google sheets
+                    worksheet_mensagens = spreadsheet.worksheet('Mensagens')
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
-
-                    st.success("Mensagem enviada com sucesso!")
-                except Exception as e:
-                    st.error(f"Erro ao enviar mensagem: {e}")
+            st.rerun()
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
