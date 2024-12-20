@@ -53,7 +53,7 @@ def handle_button_click(image_path, spreadsheet):
         if "mensagem" not in st.session_state:
             st.session_state.mensagem = ""
 
-        st.session_state.mensagem = st.text_area("Digite sua mensagem", value=st.session_state.mensagem, width = 200)
+        st.session_state.mensagem = st.text_area("Digite sua mensagem", value=st.session_state.mensagem, height  = 200)
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
         
