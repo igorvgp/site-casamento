@@ -53,11 +53,13 @@ def handle_button_click(
         mensagem = st.text_area("Digite sua mensagem")
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
-        n = 0
+        if "n" not in st.session_state:
+            st.session_state.n = 0
         if ok:
-            if len(nome) == 0:
+            if len(nome) == 0 and len(mensagem) == 0:
                 st.rerun()
-            elif len(nome) > 0 and len(mensagem) > 0 and n == 0:
+            elif ((len(nome) > 0 and len(mensagem) > 0 and (st.session_state.n == 0 or st.session_state.n == 1)) 
+            or (len(nome) == 0 and len(mensagem) > 0)):
                 with st.spinner("Executando envio..."):
                     pass
                     worksheet_mensagens = spreadsheet.worksheet("Mensagens")
@@ -69,12 +71,14 @@ def handle_button_click(
                     worksheet_mensagens = spreadsheet.worksheet('Mensagens')
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
+                    st.session_state.n = 0
                 st.rerun()
-            elif len(nome) > 0 and len(mensagem) > 0 and n != 0:
+            elif len(nome) > 0 and len(mensagem) == 0 and st.session_state.n != 0:
+                st.session_state.n = 0
                 st.rerun()
             else:
                 st.write("Toque em 'enviar' novamente")
-                n = 1
+                st.session_state.n = 1
 
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
