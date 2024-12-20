@@ -54,7 +54,9 @@ def handle_button_click(
 
         ok = st.form_submit_button("Enviar", use_container_width=True)
         if ok:
-            if len(mensagem) > 0:
+            if len(nome) == 0:
+                st.rerun()
+            elif len(nome) > 0 and len(mensagem) > 0:
                 with st.spinner("Executando envio..."):
                     pass
                     worksheet_mensagens = spreadsheet.worksheet("Mensagens")
@@ -68,6 +70,8 @@ def handle_button_click(
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
             st.rerun()
+            else:
+                pass
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
