@@ -121,7 +121,7 @@ def render_product(image_path, name, price, key, link_font, font_name, spreadshe
     st.markdown(html_content, unsafe_allow_html=True)
 
     button_key = f"gift_button_{key}"  # Chave única por produto
-    button_present = st.button("Presentear", key=button_key)
+    button_present = st.button("Presentear", key=button_key, use_container_width = True)
 
     st.markdown("""
         <style>
