@@ -8,6 +8,10 @@ def handle_button_click(
     image_path, spreadsheet
 #    db_conn: PostgresqlDatabaseConnector
 ):
+# Definir um estado inicial para o botão "Enviar"
+if "submit_clicked" not in st.session_state:
+    st.session_state["submit_clicked"] = False
+
     with st.form("new_name"):
         st.write("Leia o QR Code ou copie o código PIX abaixo:")
         with open(image_path, "rb") as image_file:
@@ -48,37 +52,30 @@ def handle_button_click(
         nome = st.text_input("Digite seu nome")
         mensagem = st.text_area("Digite sua mensagem")
 
-        # Adicionando o JavaScript aqui
-        st.markdown("""
-        <script>
-            const form = document.querySelector("form");
-            const button = form.querySelector("button[type='submit']");
-            button.addEventListener("click", () => {
-                const activeElement = document.activeElement;
-                if (activeElement.tagName === "TEXTAREA" || activeElement.tagName === "INPUT") {
-                    activeElement.blur(); // Remove o foco do campo ativo
-                }
-            });
-        </script>
-        """, unsafe_allow_html=True)
-
         # Botão de envio
         ok = st.form_submit_button("Enviar", use_container_width=True)
 
+        # Atualiza o estado ao clicar no botão
         if ok:
-            if len(mensagem) > 0:
-                with st.spinner("Executando envio..."):
-                    worksheet_mensagens = spreadsheet.worksheet("Mensagens")
-                    data_mensagens = worksheet_mensagens.get_all_records()
-                    df_mensagens = pd.DataFrame(data_mensagens)    
-                    df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
-                    df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
-                    # Inserir dados de mensagens no google sheets
-                    worksheet_mensagens = spreadsheet.worksheet('Mensagens')
-                    df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
-                    worksheet_mensagens.update("A1", df_mensagens_list)
-            st.rerun()
+            st.session_state["submit_clicked"] = True
 
+    # Lógica para processar após o clique
+    if st.session_state["submit_clicked"]:
+        if len(mensagem) > 0:
+            with st.spinner("Executando envio..."):
+                worksheet_mensagens = spreadsheet.worksheet("Mensagens")
+                data_mensagens = worksheet_mensagens.get_all_records()
+                df_mensagens = pd.DataFrame(data_mensagens)    
+                df_nova_mensagem = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':[nome], 'mensagem':[mensagem]})
+                df_mensagens = pd.concat([df_mensagens, df_nova_mensagem])
+                # Inserir dados de mensagens no google sheets
+                worksheet_mensagens = spreadsheet.worksheet('Mensagens')
+                df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
+                worksheet_mensagens.update("A1", df_mensagens_list)
+
+        # Redefine o estado do botão após o processamento
+        st.session_state["submit_clicked"] = False
+        st.rerun()
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
