@@ -25,7 +25,7 @@ def handle_button_click(
                 justify-content: center;
                 align-items: center;
                 width: 100%; /* Garante que o contêiner ocupa toda a largura */
-            }}vbnm       
+            }}
             .image-container img {{
                 width: 50%; /* Ajusta a imagem para ocupar 50% do contêiner */
                 max-width: 100%; /* Garante responsividade */
@@ -67,10 +67,7 @@ def handle_button_click(
                     worksheet_mensagens = spreadsheet.worksheet('Mensagens')
                     df_mensagens_list = [df_mensagens.columns.tolist()] + df_mensagens.values.tolist()
                     worksheet_mensagens.update("A1", df_mensagens_list)
-                    st.rerun()
-            else:
-                pass
-            
+            st.rerun()
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
