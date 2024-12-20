@@ -20,18 +20,14 @@ def tela_de_confirmacao(local_path, spreadsheet):
     df_convites = pd.DataFrame(data_convites)
     df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
     df_convites['convidados'] = df_convites['convidados'].str.split(", ")
-    #df_convites = pd.read_csv(local_path+'\data\convites.csv', sep = ';')
-    #df_convites['convidados'] = df_convites['convidados'].apply(ast.literal_eval)
 
     worksheet_convidados = spreadsheet.worksheet("Convidados")
     data_convidados = worksheet_convidados.get_all_records()
     df_convidados = pd.DataFrame(data_convidados)    
-    #df_convidados = pd.read_csv(local_path+'\data\convidados.csv', sep = ';')
 
     worksheet_confirmados = spreadsheet.worksheet("Confirmados")
     data_confirmados = worksheet_confirmados.get_all_records()
     df_confirmados = pd.DataFrame(data_confirmados)       
-    #df_confirmados = pd.read_csv(local_path+'\data\confirmados.csv', sep = ';')
 
     df_confirmados_convidados = df_confirmados.merge(df_convidados[['id_convidado', 'id_convite']], 'left', on = 'id_convidado')
     id_convites_confirmados = df_confirmados_convidados[df_confirmados_convidados['confirmado'] != ""]['id_convite'].values.tolist()
@@ -100,12 +96,10 @@ def tela_de_confirmacao(local_path, spreadsheet):
                         df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = True
                         df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
                         worksheet_confirmados.update("A1", df_confirmados_list)
-                        df_confirmados.to_csv(local_path + '/data/confirmados.csv', index = False, sep = ';')
                     else:
                         df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = False
                         df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
                         worksheet_confirmados.update("A1", df_confirmados_list)
-                        df_confirmados.to_csv(local_path + '/data/confirmados.csv', index = False, sep = ';')
                 st.rerun()
 
         elif code in id_convites and code in id_convites_confirmados:
