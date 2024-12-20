@@ -49,10 +49,11 @@ def handle_button_click(
         st.title("Deixe sua mensagem de carinho")
         st.write("(opcional)")
 
-        nome = st.text_input("Digite seu nome")
-        mensagem = st.text_area("Digite sua mensagem")
-
-        ok = st.form_submit_button("Enviar", use_container_width=True)
+        with st.form("form_envio"):
+            nome = st.text_input("Nome")
+            mensagem = st.text_input("Mensagem (opcional)")
+            ok = st.form_submit_button("Enviar", use_container_width=True)
+            
         if ok:
             with st.spinner("Executando envio..."):
                 try:
