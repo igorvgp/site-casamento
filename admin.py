@@ -235,7 +235,7 @@ def remover_convite(ids_convites, spreadsheet):
     worksheet_confirmados.update("A1", df_confirmados_list)
 
     print(f"Convites {ids_convites} removidos com sucesso!")
-
-#reset_all(lista_convidados, spreadsheet, link)
+    
+reset_all(lista_convidados, spreadsheet, link)
 #inserir_convite([["Teste1", "teste2"]], spreadsheet)
 #remover_convite(['C140213'], spreadsheet)
