@@ -74,21 +74,3 @@ st.markdown(
 
 pg = st.navigation(pages)
 pg.run()
-
-# Configurar as opções do sidebar
-# st.sidebar.title("Navegação")
-# opcao = st.sidebar.selectbox(
-#     "Escolha uma página:",  # Texto do selectbox
-#     ["Página Inicial", "Lista de Presentes", "Confirmar Presença"]  # Opções disponíveis
-# )
-
-# # Renderizar a página com base na seleção
-# if opcao == "Página Inicial":
-#     st.title("Bem-vindo ao Site de Casamento")
-#     st.write("Aqui você encontra todas as informações sobre nosso casamento.")
-    
-# elif opcao == "Lista de Presentes":
-#     lista_presentes(spreadsheet)
-
-# elif opcao == "Confirmar Presença":
-#     confirmar_presenca(spreadsheet)
