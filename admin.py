@@ -47,7 +47,7 @@ def reset_all(lista_convidados, spreadsheet, link):
         print("Reset cancelado")
         return None
 
-    ## Cria tabela convites, salva csv em /data e salva dados no google sheets
+    ## Cria tabela convites, salva dados no google sheets
     df_convites = pd.DataFrame()
     df_convites['convidados'] = lista_convidados
     n = len(df_convites)
@@ -55,7 +55,6 @@ def reset_all(lista_convidados, spreadsheet, link):
     id_convites = ["C" + str(id) for id in id_convites]
     df_convites['id_convite'] = id_convites
     df_convites = df_convites[['id_convite', 'convidados']]
-    df_convites.to_csv('data/convites.csv', index = False, sep = ';')
     # Inserir dados de convites no google sheets
     worksheet_convites = spreadsheet.worksheet('Convites')
     worksheet_convites.clear()
@@ -64,9 +63,12 @@ def reset_all(lista_convidados, spreadsheet, link):
     worksheet_convites.update("A1", df_convites_list)
     print("Tabela 'convites' criada!")
 
-    ## Cria tabela convidados, salva csv em /data e salva dados no google sheets
-    df_convites = pd.read_csv('data/convites.csv', sep = ';')
-    df_convites['convidados'] = df_convites['convidados'].apply(ast.literal_eval)
+    ## Cria tabela convidados, salva dados no google sheets
+    worksheet_convites = spreadsheet.worksheet("Convites")
+    data_convites = worksheet_convites.get_all_records()
+    df_convites = pd.DataFrame(data_convites)
+    df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
+    df_convites['convidados'] = df_convites['convidados'].str.split(", ")
     df_convidados = df_convites.explode('convidados', ignore_index=True)
     df_convidados = df_convidados.rename(columns = {'convidados':'nome_convidado'})
     n = len(df_convidados)
@@ -74,7 +76,6 @@ def reset_all(lista_convidados, spreadsheet, link):
     id_convidados = ["V" + str(id) for id in id_convidados]
     df_convidados['id_convidado'] = id_convidados
     df_convidados = df_convidados[['id_convidado', 'nome_convidado', 'id_convite']]
-    df_convidados.to_csv('data/convidados.csv', index = False, sep = ';')
     # Inserir dados de convidados no google sheets
     worksheet_convidados = spreadsheet.worksheet('Convidados')
     worksheet_convidados.clear()
@@ -82,12 +83,10 @@ def reset_all(lista_convidados, spreadsheet, link):
     worksheet_convidados.update("A1", df_convidados_list)
     print("Tabela 'convidados' criada!")
 
-    ## Cria tabela confirmados, salva csv em /data e salva dados no google sheets
-    df_convidados_list = [df_convidados.columns.tolist()] + df_convidados.values.tolist()
-    worksheet_convidados.update("A1", df_convidados_list)
+    ## Cria tabela confirmados, salva dados no google sheets
     df_confirmados = df_convidados[['id_convidado', 'nome_convidado']]
     df_confirmados['confirmado'] = None
-    df_confirmados.to_csv('data/confirmados.csv', index = False, sep = ';')
+    df_confirmados['autoriza_foto'] = False
     # Inserir dados de confirmados no google sheets
     worksheet_confirmados = spreadsheet.worksheet('Confirmados')
     worksheet_confirmados.clear()
@@ -95,9 +94,8 @@ def reset_all(lista_convidados, spreadsheet, link):
     worksheet_confirmados.update("A1", df_confirmados_list)
     print("Tabela 'confirmados' criada!")
 
-    ## Cria tabela de mensagens, salva csv em /data e salva dados no google sheets
+    ## Cria tabela de mensagens, salva dados no google sheets
     df_mensagens = pd.DataFrame({'timestamp':[str(datetime.now())], 'nome':['teste'], 'mensagem':['teste']})
-    df_mensagens.to_csv('data/mensagens.csv', index = False, sep = ';')
     # Inserir dados de mensagens no google sheets
     worksheet_mensagens = spreadsheet.worksheet('Mensagens')
     worksheet_mensagens.clear()
@@ -127,7 +125,9 @@ def inserir_convite(matriz_novos_convidados, spreadsheet):
 
     '''
     ## Tabela convites
-    df_convites = pd.read_csv('data/convites.csv', sep = ';')
+    worksheet_convites = spreadsheet.worksheet("Convites")
+    data_convites = worksheet_convites.get_all_records()
+    df_convites = pd.DataFrame(data_convites)
     df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
     df_convites['convidados'] = df_convites['convidados'].str.split(", ")
     list_convidados_insert = [convidados for convidados in matriz_novos_convidados if convidados not in df_convites['convidados'].values.tolist()]
@@ -139,7 +139,6 @@ def inserir_convite(matriz_novos_convidados, spreadsheet):
             codigos_gerados.add(random_id)
     df_novos_convidados = pd.DataFrame({'id_convite':list(codigos_gerados), 'convidados':list_convidados_insert})
     df_convites = pd.concat([df_convites, df_novos_convidados])
-    df_convites.to_csv('data/convites.csv', index = False, sep = ';')
     # Inserir novos convites no google sheets
     worksheet_convites = spreadsheet.worksheet('Convites')
     worksheet_convites.clear()
@@ -148,9 +147,14 @@ def inserir_convite(matriz_novos_convidados, spreadsheet):
     worksheet_convites.update("A1", df_convites_list)
 
     ## Tabela convidados
-    df_convites = pd.read_csv('data/convites.csv', sep = ';')
-    df_convites['convidados'] = df_convites['convidados'].apply(ast.literal_eval)
-    df_convidados = pd.read_csv('data/convidados.csv', sep = ';')
+    worksheet_convites = spreadsheet.worksheet("Convites")
+    data_convites = worksheet_convites.get_all_records()
+    df_convites = pd.DataFrame(data_convites)
+    df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
+    df_convites['convidados'] = df_convites['convidados'].str.split(", ")
+    worksheet_convidados = spreadsheet.worksheet("Convidados")
+    data_convidados = worksheet_convidados.get_all_records()
+    df_convidados = pd.DataFrame(data_convidados)
     ids_in_convites = df_convites['id_convite'].values.tolist()
     ids_in_convidados = df_convidados['id_convite'].values.tolist()
     ids_convites_novos = [id_ for id_ in ids_in_convites if id_ not in ids_in_convidados]
@@ -166,7 +170,6 @@ def inserir_convite(matriz_novos_convidados, spreadsheet):
     df_convidados_novos['id_convidado'] = list(codigos_gerados)
     df_convidados_novos = df_convidados_novos[['id_convidado', 'nome_convidado', 'id_convite']]
     df_convidados = pd.concat([df_convidados, df_convidados_novos])
-    df_convidados.to_csv('data/convidados.csv', index = False, sep = ';')
     # Inserir dados de convidados no google sheets
     worksheet_convidados = spreadsheet.worksheet('Convidados')
     worksheet_convidados.clear()
@@ -174,12 +177,13 @@ def inserir_convite(matriz_novos_convidados, spreadsheet):
     worksheet_convidados.update("A1", df_convidados_list)
 
     ## Tabela confirmados
-    df_confirmados = pd.read_csv('data/confirmados.csv', sep = ';')
+    worksheet_confirmados = spreadsheet.worksheet("Confirmados")
+    data_confirmados = worksheet_confirmados.get_all_records()
+    df_confirmados = pd.DataFrame(data_confirmados)
     df_convidados_novos = df_convidados_novos.rename(columns = {'id_convite':'confirmado'})
     df_convidados_novos['confirmado'] = None
+    df_convidados_novos['autoriza_foto'] = False
     df_confirmados = pd.concat([df_confirmados, df_convidados_novos])
-    df_confirmados.to_csv('data/confirmados.csv', index = False, sep = ';')
-    
     # Inserir dados de confirmados no google sheets
     df_confirmados = df_confirmados.fillna('')
     worksheet_confirmados = spreadsheet.worksheet('Confirmados')
@@ -193,11 +197,12 @@ def remover_convite(ids_convites, spreadsheet):
     id_convite: uma lista com os id's dos convites que serão removidos
     '''
     ## Tabela convites
-    df_convites = pd.read_csv('data/convites.csv', sep = ';')
+    worksheet_convites = spreadsheet.worksheet("Convites")
+    data_convites = worksheet_convites.get_all_records()
+    df_convites = pd.DataFrame(data_convites)
     df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
     df_convites['convidados'] = df_convites['convidados'].str.split(", ")
     df_convites = df_convites[~df_convites['id_convite'].isin(ids_convites)]
-    df_convites.to_csv('data/convites.csv', index = False, sep = ';')
     # Inserir novos convites no google sheets
     worksheet_convites = spreadsheet.worksheet('Convites')
     worksheet_convites.clear()
@@ -206,12 +211,11 @@ def remover_convite(ids_convites, spreadsheet):
     worksheet_convites.update("A1", df_convites_list)
 
     ## Tabela convidados
-    df_convites = pd.read_csv('data/convites.csv', sep = ';')
-    df_convites['convidados'] = df_convites['convidados'].apply(ast.literal_eval)
-    df_convidados = pd.read_csv('data/convidados.csv', sep = ';')
+    worksheet_convidados = spreadsheet.worksheet("Convidados")
+    data_convidados = worksheet_convidados.get_all_records()
+    df_convidados = pd.DataFrame(data_convidados)
     id_convidados_remover = df_convidados[df_convidados['id_convite'].isin(ids_convites)]['id_convidado'].values.tolist()
     df_convidados = df_convidados[~df_convidados['id_convite'].isin(ids_convites)]
-    df_convidados.to_csv('data/convidados.csv', index = False, sep = ';')
     # Inserir dados de convidados no google sheets
     worksheet_convidados = spreadsheet.worksheet('Convidados')
     worksheet_convidados.clear()
@@ -219,10 +223,10 @@ def remover_convite(ids_convites, spreadsheet):
     worksheet_convidados.update("A1", df_convidados_list)
 
     ## Tabela confirmados
-    df_confirmados = pd.read_csv('data/confirmados.csv', sep = ';')
+    worksheet_confirmados = spreadsheet.worksheet("Confirmados")
+    data_confirmados = worksheet_confirmados.get_all_records()
+    df_confirmados = pd.DataFrame(data_confirmados)
     df_confirmados = df_confirmados[~df_confirmados['id_convidado'].isin(id_convidados_remover)]
-    df_confirmados.to_csv('data/confirmados.csv', index = False, sep = ';')
-    
     # Inserir dados de confirmados no google sheets
     df_confirmados = df_confirmados.fillna('')
     worksheet_confirmados = spreadsheet.worksheet('Confirmados')
@@ -233,11 +237,5 @@ def remover_convite(ids_convites, spreadsheet):
     print(f"Convites {ids_convites} removidos com sucesso!")
 
 reset_all(lista_convidados, spreadsheet, link)
-#inserir_convite([[]], spreadsheet)
-#remover_convite(['C469027','C243451'], spreadsheet)
-
-# criar pagina de mensagens
-# pagina de boas vindas
-# refatorar código
-# fazer tela: você está confirmando presença de
-# avaliar possibilidade de um banco de dados para melhorar performance
+#inserir_convite([["Teste1", "teste2"]], spreadsheet)
+#remover_convite(['C140213'], spreadsheet)

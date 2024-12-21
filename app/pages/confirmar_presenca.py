@@ -20,18 +20,14 @@ def tela_de_confirmacao(local_path, spreadsheet):
     df_convites = pd.DataFrame(data_convites)
     df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
     df_convites['convidados'] = df_convites['convidados'].str.split(", ")
-    #df_convites = pd.read_csv(local_path+'\data\convites.csv', sep = ';')
-    #df_convites['convidados'] = df_convites['convidados'].apply(ast.literal_eval)
 
     worksheet_convidados = spreadsheet.worksheet("Convidados")
     data_convidados = worksheet_convidados.get_all_records()
     df_convidados = pd.DataFrame(data_convidados)    
-    #df_convidados = pd.read_csv(local_path+'\data\convidados.csv', sep = ';')
 
     worksheet_confirmados = spreadsheet.worksheet("Confirmados")
     data_confirmados = worksheet_confirmados.get_all_records()
     df_confirmados = pd.DataFrame(data_confirmados)       
-    #df_confirmados = pd.read_csv(local_path+'\data\confirmados.csv', sep = ';')
 
     df_confirmados_convidados = df_confirmados.merge(df_convidados[['id_convidado', 'id_convite']], 'left', on = 'id_convidado')
     id_convites_confirmados = df_confirmados_convidados[df_confirmados_convidados['confirmado'] != ""]['id_convite'].values.tolist()
@@ -88,24 +84,27 @@ def tela_de_confirmacao(local_path, spreadsheet):
                     lista_fotos_permitidas[convidados[0]] = False 
 
             for key, value in lista_fotos_permitidas.items():
-                if value == True:
-                    shutil.copy(os.path.join(local_path, "resources", "images", "mosaico", key + '.jpg'), 
-                                os.path.join(local_path, "resources", "images", "mosaico", "permitidos",  key + '.jpg'))
+                #if value == True:
+                    # shutil.copy(os.path.join(local_path, "resources", "images", "mosaico", key + '.jpg'), 
+                    #             os.path.join(local_path, "resources", "images", "mosaico", "permitidos",  key + '.jpg'))
+                    df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'autoriza_foto'] = value
+            worksheet_confirmados = spreadsheet.worksheet('Confirmados')
+            worksheet_confirmados.clear()
+            df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
+            worksheet_confirmados.update("A1", df_confirmados_list)
                
             ok = st.form_submit_button("Salvar", use_container_width=True)
 
             if ok:
                 for key, value in lista_confirmados.items():
                     if value == True:
-                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = True
+                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
                         df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
                         worksheet_confirmados.update("A1", df_confirmados_list)
-                        df_confirmados.to_csv(local_path + '/data/confirmados.csv', index = False, sep = ';')
                     else:
-                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = False
+                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
                         df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
                         worksheet_confirmados.update("A1", df_confirmados_list)
-                        df_confirmados.to_csv(local_path + '/data/confirmados.csv', index = False, sep = ';')
                 st.rerun()
 
         elif code in id_convites and code in id_convites_confirmados:
@@ -126,10 +125,28 @@ def tela_de_confirmacao(local_path, spreadsheet):
         else:
             ok = st.form_submit_button("Buscar", use_container_width=True)
 
-def exibir_mosaico(image_folder, link_font, font_name):
+def exibir_mosaico(image_folder, link_font, font_name, spreadsheet):
 
     # Carregar imagens
-    image_paths = [os.path.join(image_folder, img) for img in os.listdir(image_folder) if img.endswith(("png", "jpg", "jpeg"))]
+    # image_paths = [os.path.join(image_folder, img) for img in os.listdir(image_folder) if img.endswith(("png", "jpg", "jpeg"))]
+
+    worksheet_confirmados = spreadsheet.worksheet("Confirmados")
+    data_confirmados = worksheet_confirmados.get_all_records()
+    df_confirmados = pd.DataFrame(data_confirmados)  
+    list_autoriza_foto_names = df_confirmados[df_confirmados['autoriza_foto'] == 'TRUE']['nome_convidado'].values.tolist()
+    # show_images = []
+    # for photo in image_paths:
+    #     for name in list_autoriza_foto_names:
+    #         if name in photo:
+    #             show_images.append(photo)
+    #         else:
+    #             pass
+
+    # image_paths = show_images
+    image_paths = []
+    for nome in list_autoriza_foto_names:
+        image_paths.append(os.path.join(image_folder) + "/" + nome + ".jpg")
+
 
     if not image_paths:
         pass
@@ -253,7 +270,7 @@ def confirmar_presenca(spreadsheet):
     st.divider() 
 
     # Mosaico de fotos
-    exibir_mosaico(os.getcwd()+"/resources/images/mosaico/permitidos", link_font, font_name)
+    exibir_mosaico(os.getcwd()+"/resources/images/mosaico", link_font, font_name, spreadsheet)
 
     add_names_button = st.button(
         "Confirmar Presença", use_container_width=True
