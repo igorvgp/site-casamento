@@ -134,19 +134,10 @@ def exibir_mosaico(image_folder, link_font, font_name, spreadsheet):
     data_confirmados = worksheet_confirmados.get_all_records()
     df_confirmados = pd.DataFrame(data_confirmados)  
     list_autoriza_foto_names = df_confirmados[df_confirmados['autoriza_foto'] == 'TRUE']['nome_convidado'].values.tolist()
-    # show_images = []
-    # for photo in image_paths:
-    #     for name in list_autoriza_foto_names:
-    #         if name in photo:
-    #             show_images.append(photo)
-    #         else:
-    #             pass
 
-    # image_paths = show_images
     image_paths = []
     for nome in list_autoriza_foto_names:
         image_paths.append(os.path.join(image_folder) + "/" + nome + ".jpg")
-
 
     if not image_paths:
         pass
