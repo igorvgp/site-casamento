@@ -122,7 +122,7 @@ def boas_vindas():
         align="center", 
         font_family = font_name, 
         font_path = font_path, 
-        margin_top="20px",
+        margin_top="0px",
         margin_bottom="0px",
         width="800px"
     )
