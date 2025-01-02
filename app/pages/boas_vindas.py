@@ -1,9 +1,6 @@
 import streamlit as st
 import base64
 
-font_path = "../../resources/fonts/MonterchiSerif.ttf"
-font_name = "Monterchi Serif"
-
 def add_background_image(image_path):
     with open(image_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
@@ -110,6 +107,8 @@ def styled_paragraph(
 
 
 def boas_vindas():
+    font_path = "resources/fonts/MonterchiSerif.ttf"
+    font_name = "Monterchi Serif"
     # Adiciona imagem de fundo
     add_background_image("resources/images/sand_texture.jpg")
 
