@@ -1,5 +1,6 @@
 from app.pages.lista_presentes import lista_presentes
 from app.pages.confirmar_presenca import confirmar_presenca
+from app.pages.boas_vindas import boas_vindas
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
@@ -39,7 +40,7 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVC
 
 #####################################
 def pagina_inicial():
-    st.title("Página Inicial (não criada)")
+    boas_vindas()
 
 def deixe_uma_mensagem():
     st.title("Deixe uma mensagem (não criada)")   
