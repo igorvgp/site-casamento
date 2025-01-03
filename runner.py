@@ -43,8 +43,6 @@ spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVC
 #####################################
 def pagina_inicial():
     boas_vindas()
-    st.divider()
-    cerimonia_e_recepcao()
 
 def deixe_uma_mensagem():
     st.title("Deixe uma mensagem (não criada)")   
