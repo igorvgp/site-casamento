@@ -6,7 +6,6 @@ import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
 import os
-import base64
 import pandas as pd
 from pathlib import Path
 
@@ -28,8 +27,8 @@ with open(temp_path, "w") as f:
 credentials = Credentials.from_service_account_file(temp_path, scopes=scopes)
 
 # Configurar as credenciais do sheets
-# credentials_file = os.path.join(local_path, "settings", "credentials.json")
-# credentials = Credentials.from_service_account_file(credentials_file, scopes=scopes)
+#credentials_file = os.path.join(local_path, "settings", "credentials.json")
+#credentials = Credentials.from_service_account_file(credentials_file, scopes=scopes)
 
 client = gspread.authorize(credentials)
 

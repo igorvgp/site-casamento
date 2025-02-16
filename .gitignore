@@ -139,3 +139,5 @@ dmypy.json
 
 .streamlit/secrets.toml
 resources/images/home_wordcloud.png
+
+credentials.json
