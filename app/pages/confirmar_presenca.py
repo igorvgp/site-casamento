@@ -39,7 +39,7 @@ def tela_de_confirmacao(local_path, spreadsheet):
     id_convites = df_convidados['id_convite'].to_list()
     with st.form("confirm_presence"):
         st.title("Confirmar Presença")
-        search_name = st.text_input("Digite o seu nome ou de algum convidado que está no convite:")
+        search_name = st.text_input("Informe seu nome ou nome no convite:")
         search_name_formated = search_name.upper()
         search_name_formated = remover_acentos(search_name_formated.upper())
         ok = st.form_submit_button("Buscar", use_container_width=True)
@@ -289,18 +289,20 @@ def confirmar_presenca(spreadsheet):
         }}
     </style>
     <div class="left-container">
-        <div class="page-title">Confirmar Presença</div>
+        <div class="page-title">Confirme sua Presença</div>
     </div>
     """, unsafe_allow_html=True)
 
     st.divider() 
 
+    add_names_button = st.button(
+        "**Confirmar Presença**", use_container_width=True
+    )
+
     # Mosaico de fotos
     exibir_mosaico(os.getcwd()+"/resources/images/mosaico", link_font, font_name, spreadsheet)
 
-    add_names_button = st.button(
-        "Confirmar Presença", use_container_width=True
-    )
+
     if add_names_button:
         tela_de_confirmacao(local_path, spreadsheet)
     st.divider()
