@@ -3,14 +3,18 @@ import ast
 import base64
 import shutil
 import gspread
+import unicodedata
 import  pandas    as pd
 import streamlit as st
-
 from PIL                           import Image
+from thefuzz                       import fuzz 
 from math                          import ceil, sqrt
 from google.oauth2.service_account import Credentials
 
 local_path = os.getcwd()
+
+def remover_acentos(texto):
+    return ''.join(c for c in unicodedata.normalize('NFKD', texto) if not unicodedata.combining(c))
 
 @st.dialog("Confirmar Presença")
 def tela_de_confirmacao(local_path, spreadsheet):
@@ -35,8 +39,37 @@ def tela_de_confirmacao(local_path, spreadsheet):
     id_convites = df_convidados['id_convite'].to_list()
     with st.form("confirm_presence"):
         st.title("Confirmar Presença")
-        code = st.text_input("Digite o código do convite:")
-        code = code.upper()
+        search_name = st.text_input("Digite o seu nome ou de algum convidado que está no convite:")
+        search_name_formated = code.upper()
+        search_name_formated = remover_acentos(code_formated.upper())
+
+        # Lista para armazenar os possíveis convidados encontrados
+        possiveis_convidados = []
+        limiar_similaridade = 80 # Defina o limiar de similaridade desejado
+        # Percorre a tabela para encontrar correspondências aproximadas
+        for _, row in df_convites.iterrows():
+            cod_convite = row["id_convite"]
+            nome_convidados = row["convidados"]
+            
+            # Normaliza os nomes da lista
+            nome_convidados_clean = remover_acentos(nome_convidados.upper())
+
+            # Usa fuzzy matching para encontrar correspondências
+            similaridade = fuzz.partial_ratio(search_name_formated, nome_convidados_clean)
+
+            if similaridade >= limiar_similaridade:
+                possiveis_convidados.append(nome_convidados)
+        
+        if len(possiveis_convidados) == 0:
+            st.write("""Nenhum convidado com este nome. 
+            Verifique se o nome foi digitado 
+            corretamente ou entre em contato com os noivos.""")
+            ok = st.form_submit_button("Buscar", use_container_width=True)
+
+        else:
+            st.write("**Selecione abaixo o convite no qual deseja confirmar a presença:**")
+            escolha = st.selectbox("Escolha uma opção:", possiveis_convidados)
+            code = df_convites[df_convites['convidados'] == escolha]['id_convite'].values[0]
 
         if code in id_convites and code not in id_convites_confirmados:
             id_convite = df_convidados[df_convidados['id_convite'] == code]['id_convite'].values[0]
