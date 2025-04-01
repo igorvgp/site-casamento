@@ -125,32 +125,35 @@ def reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link):
     print(f"Tabelas criadas no link: {link}")
 
 # Função inserir novo convidado
-def inserir_convite(matriz_novos_convidados, spreadsheet):
+def inserir_convite(dicionario_novos_convidados, spreadsheet):
     '''
-    recebe uma matriz, como no exemplo:
-    [
-        ['Convidado x', 'Convidado y'],
-        ['Convidado z']
-    ]
+    recebe uma dicionario com chave "nome_convite" e valor "convidados", como no exemplo:
+    {
+        'convite_1: ['Convidado x', 'Convidado y'],
+        'convite_2: ['Convidado z']
+    }
     separe os nomes com ", " vírgula e espaço
 
     ** Não se esqueça de incluir as fotos dos convidados **
 
     '''
+    matriz_novos_convidados = list(dicionario_novos_convidados.values())
     ## Tabela convites
     worksheet_convites = spreadsheet.worksheet("Convites")
     data_convites = worksheet_convites.get_all_records()
     df_convites = pd.DataFrame(data_convites)
     df_convites['convidados'] = df_convites['convidados'].apply(lambda x: x.replace("[","").replace("]","").replace("'", ""))
     df_convites['convidados'] = df_convites['convidados'].str.split(", ")
-    list_convidados_insert = [convidados for convidados in matriz_novos_convidados if convidados not in df_convites['convidados'].values.tolist()]
+    list_convidados_nomes_insert = [[nome_convite, convidados] for nome_convite, convidados in dicionario_novos_convidados.items()  if convidados not in df_convites['convidados'].values.tolist()]
+    list_nomes_insert = [item[0] for item in list_convidados_nomes_insert]
+    list_convidados_insert = [item[1] for item in list_convidados_nomes_insert]
     list_ids_existentes = df_convites['id_convite'].values.tolist()
     codigos_gerados = set()
     while len(codigos_gerados) < len(list_convidados_insert):
-        random_id = "C" + str(np.random.randint(10000, 1000000 + 1))
-        if random_id not in list_ids_existentes and random_id not in codigos_gerados:
-            codigos_gerados.add(random_id)
-    df_novos_convidados = pd.DataFrame({'id_convite':list(codigos_gerados), 'convidados':list_convidados_insert})
+            random_id = "C" + str(np.random.randint(10000, 1000000 + 1))
+            if random_id not in list_ids_existentes and random_id not in codigos_gerados:
+                codigos_gerados.add(random_id)
+    df_novos_convidados = pd.DataFrame({'id_convite':list(codigos_gerados), 'convidados':list_convidados_insert, 'nome_convite':list_nomes_insert})
     df_convites = pd.concat([df_convites, df_novos_convidados])
     # Inserir novos convites no google sheets
     worksheet_convites = spreadsheet.worksheet('Convites')
@@ -249,6 +252,9 @@ def remover_convite(ids_convites, spreadsheet):
 
     print(f"Convites {ids_convites} removidos com sucesso!")
     
-reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
-#inserir_convite([["Teste1", "teste2"]], spreadsheet)
-#remover_convite(['C140213'], spreadsheet)
+#reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
+# inserir_convite(
+#     {'convite_1': ['Convidado x', 'Convidado y'],
+#      'convite_2': ['Convidado z']},
+#     spreadsheet)
+remover_convite(['C347167', 'C761346'], spreadsheet)

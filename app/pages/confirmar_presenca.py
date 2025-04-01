@@ -60,9 +60,10 @@ def tela_de_confirmacao(local_path, spreadsheet):
             nome_convidados_clean = remover_acentos(nome_convidados_formated.upper())
 
             # Usa fuzzy matching para encontrar correspondências
-            similaridade = fuzz.partial_ratio(search_name_formated, nome_convidados_clean)
+            similaridade1 = fuzz.partial_ratio(search_name_formated, nome_convidados_clean)
+            similaridade2 = fuzz.partial_ratio(search_name_formated, nome_convite.upper())
 
-            if similaridade >= limiar_similaridade:
+            if similaridade1 >= limiar_similaridade or similaridade2 >= limiar_similaridade:
                 possiveis_convidados.append(nome_convite)
                 possiveis_convidados_cod_convite.append(cod_convite)
         if len(possiveis_convidados) > 0:
@@ -157,7 +158,7 @@ def tela_de_confirmacao(local_path, spreadsheet):
                 st.write("""Convidado não encontrado. 
                 Verifique se o código foi digitado 
                 corretamente ou entre em contato com os noivos.""")
-                ok = st.form_submit_button("Buscar", use_container_width=True)
+                #ok = st.form_submit_button("Buscar", use_container_width=True)
         else:
                 ok = st.write('')
 
