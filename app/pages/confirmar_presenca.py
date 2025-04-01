@@ -40,11 +40,13 @@ def tela_de_confirmacao(local_path, spreadsheet):
     with st.form("confirm_presence"):
         st.title("Confirmar Presença")
         search_name = st.text_input("Digite o seu nome ou de algum convidado que está no convite:")
-        search_name_formated = code.upper()
-        search_name_formated = remover_acentos(code_formated.upper())
+        search_name_formated = search_name.upper()
+        search_name_formated = remover_acentos(search_name_formated.upper())
+        ok = st.form_submit_button("Buscar", use_container_width=True)
 
         # Lista para armazenar os possíveis convidados encontrados
         possiveis_convidados = []
+        possiveis_convidados_cod_convite = []
         limiar_similaridade = 80 # Defina o limiar de similaridade desejado
         # Percorre a tabela para encontrar correspondências aproximadas
         for _, row in df_convites.iterrows():
@@ -52,111 +54,111 @@ def tela_de_confirmacao(local_path, spreadsheet):
             nome_convidados = row["convidados"]
             
             # Normaliza os nomes da lista
-            nome_convidados_clean = remover_acentos(nome_convidados.upper())
+            if type(nome_convidados) == list:
+                nome_convidados_formated = ", ".join(nome_convidados)
+            nome_convidados_clean = remover_acentos(nome_convidados_formated.upper())
 
             # Usa fuzzy matching para encontrar correspondências
             similaridade = fuzz.partial_ratio(search_name_formated, nome_convidados_clean)
 
             if similaridade >= limiar_similaridade:
-                possiveis_convidados.append(nome_convidados)
-        
-        if len(possiveis_convidados) == 0:
-            st.write("""Nenhum convidado com este nome. 
-            Verifique se o nome foi digitado 
-            corretamente ou entre em contato com os noivos.""")
-            ok = st.form_submit_button("Buscar", use_container_width=True)
-
-        else:
+                possiveis_convidados.append(nome_convidados_formated)
+                possiveis_convidados_cod_convite.append(cod_convite)
+        if len(possiveis_convidados) > 0:
             st.write("**Selecione abaixo o convite no qual deseja confirmar a presença:**")
-            escolha = st.selectbox("Escolha uma opção:", possiveis_convidados)
-            code = df_convites[df_convites['convidados'] == escolha]['id_convite'].values[0]
-
-        if code in id_convites and code not in id_convites_confirmados:
-            id_convite = df_convidados[df_convidados['id_convite'] == code]['id_convite'].values[0]
-            convidados = df_convites[df_convites['id_convite'] == id_convite]['convidados'].values[0]
-
-            lista_confirmados = {}
-            if len(convidados) > 1:
-                st.write("**Marque os convidados que irão ao casamento:**")
-                for index in range(len(convidados)):
-                    lista_confirmados[convidados[index]] = st.checkbox(convidados[index])
-
+            escolha = st.radio("Escolha uma opção:", possiveis_convidados, index = None)
+            ok = st.form_submit_button("Selecionar", use_container_width=True)
+            if escolha == None:
+                st.write("")
             else:
-                resposta = st.radio(f"**{convidados[0]}, você deseja confirmar sua presença?**", options=["Sim", "Não"], key = "radio1", index = None)
-                if resposta == "Sim":
-                    lista_confirmados[convidados[0]] = True
-                else:
-                    lista_confirmados[convidados[0]] = False            
+                index_code = possiveis_convidados.index(escolha)
+                code = possiveis_convidados_cod_convite[index_code]
 
-            lista_fotos_permitidas = {}
-            lista_foto_existe = []
-            for convidado in convidados:
-                image_path = os.path.join(local_path, "resources", "images", "mosaico", convidado +'.jpg')
-                lista_foto_existe.append(os.path.isfile(image_path))
+                if code in id_convites and code not in id_convites_confirmados:
+                    id_convite = df_convidados[df_convidados['id_convite'] == code]['id_convite'].values[0]
+                    convidados = df_convites[df_convites['id_convite'] == id_convite]['convidados'].values[0]
 
-            if len(convidados) > 1:
-                for index in range(len(convidados)):
-                    if index == 0 and True in lista_foto_existe:
-                        st.write("**Marque as fotos que você permite que sejam exibidas nesta página:**") 
-                    image_path = os.path.join(local_path, "resources", "images", "mosaico", convidados[index]+'.jpg')
-                    if os.path.exists(image_path):
-                        col1, col2, col3 = st.columns([.5, 3, 8])  # Ajuste a largura das colunas como preferir
-                        with col1:
-                            lista_fotos_permitidas[convidados[index]] = st.checkbox("", key = convidados[index])
-                        with col2:
-                            st.image(image_path, use_container_width=False)
-            else:
-                col1, col2 = st.columns([5, 11])  # Ajuste a largura das colunas como preferir
-                with col1:
-                    st.image(os.path.join(local_path, "resources", "images", "mosaico", convidados[0]+'.jpg'), use_container_width=True)
+                    lista_confirmados = {}
+                    if len(convidados) > 1:
+                        st.write("**Marque os convidados que irão ao casamento:**")
+                        for index in range(len(convidados)):
+                            lista_confirmados[convidados[index]] = st.checkbox(convidados[index])
 
-                resposta = st.radio("**Você permite que a foto acima seja exibida nesta página?**", options=["Sim", "Não"], key = "radio2", index = None)
-                if resposta == "Sim":
-                    lista_fotos_permitidas[convidados[0]] = True
-                else:
-                    lista_fotos_permitidas[convidados[0]] = False 
-
-            for key, value in lista_fotos_permitidas.items():
-                #if value == True:
-                    # shutil.copy(os.path.join(local_path, "resources", "images", "mosaico", key + '.jpg'), 
-                    #             os.path.join(local_path, "resources", "images", "mosaico", "permitidos",  key + '.jpg'))
-                    df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'autoriza_foto'] = value
-            worksheet_confirmados = spreadsheet.worksheet('Confirmados')
-            worksheet_confirmados.clear()
-            df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
-            worksheet_confirmados.update("A1", df_confirmados_list)
-               
-            ok = st.form_submit_button("Salvar", use_container_width=True)
-
-            if ok:
-                for key, value in lista_confirmados.items():
-                    if value == True:
-                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
-                        df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
-                        worksheet_confirmados.update("A1", df_confirmados_list)
                     else:
-                        df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
-                        df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
-                        worksheet_confirmados.update("A1", df_confirmados_list)
-                st.rerun()
+                        resposta = st.radio(f"**{convidados[0]}, você deseja confirmar sua presença?**", options=["Sim", "Não"], key = "radio1", index = None)
+                        if resposta == "Sim":
+                            lista_confirmados[convidados[0]] = True
+                        else:
+                            lista_confirmados[convidados[0]] = False            
 
-        elif code in id_convites and code in id_convites_confirmados:
-            st.write("""Você já preencheu o formulário para este convite.
-                        Caso tenha cometido algum erro ao preencher a confirmação
-                        de presença, ou queira mudar o status de confirmação, favor
-                        entrar em contato com os noivos.""")
-            ok = st.form_submit_button("OK", use_container_width=True)   
-            if ok:
-                st.rerun()        
+                    lista_fotos_permitidas = {}
+                    lista_foto_existe = []
+                    for convidado in convidados:
+                        image_path = os.path.join(local_path, "resources", "images", "mosaico", convidado +'.jpg')
+                        lista_foto_existe.append(os.path.isfile(image_path))
 
+                    if len(convidados) > 1:
+                        for index in range(len(convidados)):
+                            if index == 0 and True in lista_foto_existe:
+                                st.write("**Marque as fotos que você permite que sejam exibidas nesta página:**") 
+                            image_path = os.path.join(local_path, "resources", "images", "mosaico", convidados[index]+'.jpg')
+                            if os.path.exists(image_path):
+                                col1, col2, col3 = st.columns([.5, 3, 8])  # Ajuste a largura das colunas como preferir
+                                with col1:
+                                    lista_fotos_permitidas[convidados[index]] = st.checkbox("", key = convidados[index])
+                                with col2:
+                                    st.image(image_path, use_container_width=False)
+                    else:
+                        col1, col2 = st.columns([5, 11])  # Ajuste a largura das colunas como preferir
+                        with col1:
+                            st.image(os.path.join(local_path, "resources", "images", "mosaico", convidados[0]+'.jpg'), use_container_width=True)
 
-        elif code != "":
-            st.write("""Convidado não encontrado. 
-            Verifique se o código foi digitado 
-            corretamente ou entre em contato com os noivos.""")
-            ok = st.form_submit_button("Buscar", use_container_width=True)
+                        resposta = st.radio("**Você permite que a foto acima seja exibida nesta página?**", options=["Sim", "Não"], key = "radio2", index = None)
+                        if resposta == "Sim":
+                            lista_fotos_permitidas[convidados[0]] = True
+                        else:
+                            lista_fotos_permitidas[convidados[0]] = False 
+
+                    for key, value in lista_fotos_permitidas.items():
+                        #if value == True:
+                            # shutil.copy(os.path.join(local_path, "resources", "images", "mosaico", key + '.jpg'), 
+                            #             os.path.join(local_path, "resources", "images", "mosaico", "permitidos",  key + '.jpg'))
+                            df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'autoriza_foto'] = value
+                    worksheet_confirmados = spreadsheet.worksheet('Confirmados')
+                    worksheet_confirmados.clear()
+                    df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
+                    worksheet_confirmados.update("A1", df_confirmados_list)
+                    
+                    ok = st.form_submit_button("Confirmar Presença", use_container_width=True)
+
+                    if ok:
+                        for key, value in lista_confirmados.items():
+                            if value == True:
+                                df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
+                                df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
+                                worksheet_confirmados.update("A1", df_confirmados_list)
+                            else:
+                                df_confirmados.loc[df_confirmados['nome_convidado'] == key, 'confirmado'] = value
+                                df_confirmados_list = [df_confirmados.columns.tolist()] + df_confirmados.values.tolist()
+                                worksheet_confirmados.update("A1", df_confirmados_list)
+                        st.rerun()
+
+                elif code in id_convites and code in id_convites_confirmados:
+                    st.write("""Você já preencheu o formulário para este convite.
+                                Caso tenha cometido algum erro ao preencher a confirmação
+                                de presença, ou queira mudar o status de confirmação, favor
+                                entrar em contato com os noivos.""")
+                    ok = st.form_submit_button("OK", use_container_width=True)   
+                    if ok:
+                        st.rerun()        
+
+        elif search_name != "":
+                st.write("""Convidado não encontrado. 
+                Verifique se o código foi digitado 
+                corretamente ou entre em contato com os noivos.""")
+                ok = st.form_submit_button("Buscar", use_container_width=True)
         else:
-            ok = st.form_submit_button("Buscar", use_container_width=True)
+                ok = st.write('')
 
 def exibir_mosaico(image_folder, link_font, font_name, spreadsheet):
 

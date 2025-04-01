@@ -141,4 +141,4 @@ dmypy.json
 resources/images/home_wordcloud.png
 
 credentials.json
-tamp_credentials.json
+temp_credentials.json
