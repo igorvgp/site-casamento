@@ -4,43 +4,55 @@ import gspread
 import warnings
 import numpy  as np
 import pandas as pd
+import streamlit as st
 
+from pathlib  import Path    
 from datetime import datetime
 from google.oauth2.service_account import Credentials
 
 warnings.filterwarnings('ignore')
 
-# Configurar as credenciais
-credentials_file = "settings/credentials.json"
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
-credentials = Credentials.from_service_account_file(credentials_file, scopes=scopes)
+
+# Configurar as credenciais do Google Sheets a partir do Streamlit Secrets
+creds_json = st.secrets["google"]["creds"]
+
+# Salvar credenciais temporariamente (necessário para gspread)
+temp_path = Path("temp_credentials.json")
+with open(temp_path, "w") as f:
+    f.write(creds_json)
+
+credentials = Credentials.from_service_account_file(temp_path, scopes=scopes)
 client = gspread.authorize(credentials)
 
 # Abrir a planilha
 link = "https://docs.google.com/spreadsheets/d/1Fy8dVCIIAeElyKrw3TYwhgqoygGxyWWg0dEI6Um4AZk/edit?usp=sharing"
 spreadsheet = client.open_by_url(link)
 
-lista_convidados = [
-                        ['Luan Antônio', 'Sara Gadelha'],
-                        ['Guilherme Rabelo','Paloma Pereira'],
-                        ['Antônio Gomes', 'Juscilene Pereira'],
-                        ['João Batista', 'Mônica Maria'],
-                        ['Felipe Lino'],
-                        ['Eduarda Moreira', 'Pedro Henrique'],
-                        ['Danilo Junio', 'Joyce Moura', 'Daniel Moura'],
-                        ['Renata Cristina'],
-                        ['Marcelo Eleutério'],
-                        ['Sidnei Junio'],
-                        ['Carlos Germano', 'Luisa Barbosa'],
-                        ['Laiane Camargos','Tiago Miller', 'Leonardo', 'Augustus'],
-                        ['Letícia Penido', 'Tales']
-                    ]
+convidados = {
+    'Sara e Luan': ['Luan Antônio', 'Sara Gadelha'],
+    'Paloma e Guilherme': ['Guilherme Rabelo', 'Paloma Pereira'],
+    'Cilene e Toninho': ['Antônio Gomes Toninho', 'Juscilene Pereira Cilene'],
+    'Mônica e João': ['João Batista', 'Mônica Maria'],
+    'Felipe': ['Felipe Lino'],
+    'Eduarda e Pedro': ['Eduarda Moreira', 'Pedro Henrique'],
+    'Joyce, Danilo e Daniel': ['Danilo Junio', 'Joyce Moura', 'Daniel Moura'],
+    'Renata': ['Renata Cristina'],
+    'Marcelo': ['Marcelo Eleutério'],
+    'Sidnei': ['Sidnei Junio'],
+    'Luisa e Carlos': ['Carlos Germano', 'Luisa Barbosa'],
+    'Laiane e Tiago': ['Laiane Camargos', 'Tiago Miller', 'Leonardo', 'Augustus'],
+    'Letícia e Tales': ['Letícia Penido', 'Tales']
+}
+
+lista_convidados = list(convidados.values())
+lista_nomes_convites = list(convidados.keys())
 
 ###### Função de resetar tudo ######
-def reset_all(lista_convidados, spreadsheet, link):
+def reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link):
 
     answer = input('Tem certeza que deseja resetar todas as bases? Você irá perder toda a lista de confirmação. (S/N)')
     if answer.upper() == 'N':
@@ -50,11 +62,12 @@ def reset_all(lista_convidados, spreadsheet, link):
     ## Cria tabela convites, salva dados no google sheets
     df_convites = pd.DataFrame()
     df_convites['convidados'] = lista_convidados
+    df_convites['nome_convite'] = lista_nomes_convites
     n = len(df_convites)
     id_convites = np.random.choice(range(100000, 1000000), size=n, replace=False)
     id_convites = ["C" + str(id) for id in id_convites]
     df_convites['id_convite'] = id_convites
-    df_convites = df_convites[['id_convite', 'convidados']]
+    df_convites = df_convites[['id_convite', 'convidados', 'nome_convite']]
     # Inserir dados de convites no google sheets
     worksheet_convites = spreadsheet.worksheet('Convites')
     worksheet_convites.clear()
@@ -236,6 +249,6 @@ def remover_convite(ids_convites, spreadsheet):
 
     print(f"Convites {ids_convites} removidos com sucesso!")
     
-reset_all(lista_convidados, spreadsheet, link)
+reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
 #inserir_convite([["Teste1", "teste2"]], spreadsheet)
 #remover_convite(['C140213'], spreadsheet)

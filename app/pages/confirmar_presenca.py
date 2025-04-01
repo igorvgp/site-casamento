@@ -39,7 +39,7 @@ def tela_de_confirmacao(local_path, spreadsheet):
     id_convites = df_convidados['id_convite'].to_list()
     with st.form("confirm_presence"):
         st.title("Confirmar Presença")
-        search_name = st.text_input("Informe seu nome ou nome no convite:")
+        search_name = st.text_input("Informe seu nome ou nome do convite:")
         search_name_formated = search_name.upper()
         search_name_formated = remover_acentos(search_name_formated.upper())
         ok = st.form_submit_button("Buscar", use_container_width=True)
@@ -52,6 +52,7 @@ def tela_de_confirmacao(local_path, spreadsheet):
         for _, row in df_convites.iterrows():
             cod_convite = row["id_convite"]
             nome_convidados = row["convidados"]
+            nome_convite = row["nome_convite"]
             
             # Normaliza os nomes da lista
             if type(nome_convidados) == list:
@@ -62,7 +63,7 @@ def tela_de_confirmacao(local_path, spreadsheet):
             similaridade = fuzz.partial_ratio(search_name_formated, nome_convidados_clean)
 
             if similaridade >= limiar_similaridade:
-                possiveis_convidados.append(nome_convidados_formated)
+                possiveis_convidados.append(nome_convite)
                 possiveis_convidados_cod_convite.append(cod_convite)
         if len(possiveis_convidados) > 0:
             st.write("**Selecione abaixo o convite no qual deseja confirmar a presença:**")
