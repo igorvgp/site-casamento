@@ -26,14 +26,10 @@ with open(temp_path, "w") as f:
 
 credentials = Credentials.from_service_account_file(temp_path, scopes=scopes)
 
-# Configurar as credenciais do sheets
-#credentials_file = os.path.join(local_path, "settings", "credentials.json")
-#credentials = Credentials.from_service_account_file(credentials_file, scopes=scopes)
-
 client = gspread.authorize(credentials)
 
 # Abrir a planilha
-spreadsheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1Fy8dVCIIAeElyKrw3TYwhgqoygGxyWWg0dEI6Um4AZk/edit?usp=sharing")
+spreadsheet = client.open_by_url(st.secrets["database"]["gsheets_url"])
 
 #confirmar_presenca(spreadsheet)
 
