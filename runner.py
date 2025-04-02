@@ -53,11 +53,11 @@ def page_cerimonia_e_recepcao():
 
 pages = {
     "": [
-        st.Page(pagina_inicial, title="Página Inicial 🏠"),
-        st.Page(page_lista_presentes, title="Lista de Presentes 🎁"),
-        st.Page(page_confirmar_presenca, title="Confirme sua presença 📓"),
-        st.Page(page_cerimonia_e_recepcao, title="Cerimônia e Recepção 📍"),
-        st.Page(deixe_uma_mensagem, title="Deixe uma mensagem ✉️")
+        st.Page(pagina_inicial, title="Página Inicial"),
+        st.Page(page_lista_presentes, title="Lista de Presentes"),
+        st.Page(page_confirmar_presenca, title="Confirme sua presença"),
+        st.Page(page_cerimonia_e_recepcao, title="Cerimônia e Recepção"),
+        st.Page(deixe_uma_mensagem, title="Deixe uma mensagem")
     ],
 }
 

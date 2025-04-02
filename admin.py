@@ -45,7 +45,15 @@ convidados = {
     'Sidnei': ['Sidnei Junio'],
     'Luisa e Carlos': ['Carlos Germano', 'Luisa Barbosa'],
     'Laiane e Tiago': ['Laiane Camargos', 'Tiago Miller', 'Leonardo', 'Augustus'],
-    'Letícia e Tales': ['Letícia Penido', 'Tales']
+    'Letícia e Tales': ['Letícia Penido', 'Tales'],
+    'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
+    'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
+    'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
+    'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano'],
+    'Fanny Amorim': ['Fanny Amorim'],
+    'Jéssica e Anderson': ['Jéssica Conrado', 'Anderson'],
+    'Marynna Mendonça': ['Marynna Mendonça'],
+    'Isabella e Felipe': ['Isabella Souza', 'Felipe Souza']
 }
 
 lista_convidados = list(convidados.values())
@@ -117,10 +125,10 @@ def reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link):
     print("Tabela 'mensagens' criada!")
 
     ## Remove fotos da pasta 'permitidos'
-    for arquivo in os.listdir('resources/images/mosaico/permitidos'):
-        caminho_arquivo = os.path.join('resources/images/mosaico/permitidos', arquivo)
-        if os.path.isfile(caminho_arquivo):
-            os.remove(caminho_arquivo)
+    # for arquivo in os.listdir('resources/images/mosaico/permitidos'):
+    #     caminho_arquivo = os.path.join('resources/images/mosaico/permitidos', arquivo)
+    #     if os.path.isfile(caminho_arquivo):
+    #         os.remove(caminho_arquivo)
 
     print(f"Tabelas criadas no link: {link}")
 
@@ -252,9 +260,13 @@ def remover_convite(ids_convites, spreadsheet):
 
     print(f"Convites {ids_convites} removidos com sucesso!")
     
-#reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
-# inserir_convite(
-#     {'convite_1': ['Convidado x', 'Convidado y'],
-#      'convite_2': ['Convidado z']},
-#     spreadsheet)
-remover_convite(['C347167', 'C761346'], spreadsheet)
+reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
+inserir_convite(
+    {'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
+     'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
+    # 'Jéssica e Anderson': ['Jéssica Conrado', 'Anderson'],
+     'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
+     'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano']
+     },
+    spreadsheet)
+#remover_convite(['C347167', 'C761346'], spreadsheet)
