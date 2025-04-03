@@ -2,13 +2,9 @@ import base64
 import pandas as pd
 import streamlit as st
 from datetime import datetime
-from pathlib  import Path   
-from google.oauth2.service_account import Credentials
-import gspread
-
 
 @st.dialog("Presentear")
-def handle_button_click_1(
+def handle_button_click(
     image_path, spreadsheet
 #    db_conn: PostgresqlDatabaseConnector
 ):
@@ -83,11 +79,6 @@ def handle_button_click_1(
             else:
                 st.write("Toque em 'enviar' novamente")
                 st.session_state.n = 1
-    
-def handle_button_click(link):
-    st.markdown(f"""
-        <meta http-equiv="refresh" content="0; url={link}">
-    """, unsafe_allow_html=True)
 
 
 def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
@@ -138,12 +129,7 @@ def render_product(image_path, name, price, key, link_font, font_name, spreadshe
     st.markdown(html_content, unsafe_allow_html=True)
 
     button_key = f"gift_button_{key}"  # Chave única por produto
-    if st.button("Presentear", key=button_key, use_container_width=True):
-        st.components.v1.html(f"""
-            <script>
-                window.open("https://www.google.com.br", "_blank");
-            </script>
-        """, height=0)
+    button_present = st.button("Presentear", key=button_key, use_container_width = True)
 
     st.markdown("""
         <style>
@@ -172,9 +158,7 @@ def render_product(image_path, name, price, key, link_font, font_name, spreadshe
     """, unsafe_allow_html=True)
 
     if button_present:
-        #handle_button_click_1("resources/images/qr_liquidificador.png", spreadsheet)
-        link = 'www.google.com'
-        handle_button_click(link)
+        handle_button_click("resources/images/qr_liquidificador.png", spreadsheet)
 
 def add_background_image(image_path):
     with open(image_path, "rb") as image_file:
@@ -246,46 +230,27 @@ def lista_presentes(spreadsheet):
     
     st.divider()
 
-    scopes = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive"
-    ]
-
-    # Configurar as credenciais do Google Sheets a partir do Streamlit Secrets
-    creds_json = st.secrets["google"]["creds"]
-
-    # Salvar credenciais temporariamente (necessário para gspread)
-    temp_path = Path("temp_credentials.json")
-    with open(temp_path, "w") as f:
-        f.write(creds_json)
-
-    credentials = Credentials.from_service_account_file(temp_path, scopes=scopes)
-    client = gspread.authorize(credentials)
-
-    # Abrir a planilha
-    link = "https://docs.google.com/spreadsheets/d/1Fy8dVCIIAeElyKrw3TYwhgqoygGxyWWg0dEI6Um4AZk/edit?usp=sharing"
-    spreadsheet = client.open_by_url(link)
-
     # Lista de produtos
-    worksheet_produtos = spreadsheet.worksheet("Produtos")
-    data_produtos = worksheet_produtos.get_all_records()
-    df_produtos = pd.DataFrame(data_produtos)
-    produtos = df_produtos.to_dict(orient='records')
+    produtos = [
+        {"image": "resources/images/liquidificador.jpg", "name": "Liquidificador", "price": "R$140,00"},
+        {"image": "resources/images/airfryer.jpg", "name": "AirFryer", "price": "R$550,00"},
+        {"image": "resources/images/ar-condicionado.jpg", "name": "Ar Condicionado", "price": "R$3100,00"},
+        {"image": "resources/images/sofa.jpg", "name": "Sofá", "price": "R$2500,00"},
+        {"image": "resources/images/panelas.jpg", "name": "Jogo de Panelas", "price": "R$400,00"},
+        {"image": "resources/images/mesa-jantar.jpg", "name": "Mesa de Jantar", "price": "R$3500,00"}
+    ]
 
     # Renderizar produtos
     for i in range(0, len(produtos), 3):
         cols = st.columns(3)
         for j, produto in enumerate(produtos[i:i+3]):
             with cols[j]:
-                try:
-                    render_product(
-                        produto["path"],
-                        produto["nome"],
-                        produto["preco"],
-                        f"{i+j}",  # Chave única
-                        link_font,
-                        font_name,
-                        spreadsheet
-                    )
-                except:
-                    pass
+                render_product(
+                    produto["image"],
+                    produto["name"],
+                    produto["price"],
+                    f"{i+j}",  # Chave única
+                    link_font,
+                    font_name,
+                    spreadsheet
+                )

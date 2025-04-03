@@ -124,6 +124,15 @@ def reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link):
     worksheet_mensagens.update("A1", df_mensagens_list)
     print("Tabela 'mensagens' criada!")
 
+    ## Cria tabela de produtos, salva dados no google sheets
+    df_produtos = pd.DataFrame({'path':["resources/images/liquidificador.jpg"], 'nome':['teste'], 'preco':['R$ 100,00'], 'link':['https://www.google.com.br/']})
+    # Inserir dados de mensagens no google sheets
+    worksheet_produtos = spreadsheet.worksheet('Produtos')
+    worksheet_produtos.clear()
+    df_produtos_list = [df_produtos.columns.tolist()] + df_produtos.values.tolist()
+    worksheet_produtos.update("A1", df_produtos_list)
+    print("Tabela 'produtos' criada!")
+
     ## Remove fotos da pasta 'permitidos'
     # for arquivo in os.listdir('resources/images/mosaico/permitidos'):
     #     caminho_arquivo = os.path.join('resources/images/mosaico/permitidos', arquivo)
@@ -261,11 +270,11 @@ def remover_convite(ids_convites, spreadsheet):
     print(f"Convites {ids_convites} removidos com sucesso!")
     
 reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
-inserir_convite(
-    # {'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
-    #  'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
-    #  'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
-    #  'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano']
-    #  },
-    spreadsheet)
-#remover_convite(['C347167', 'C761346'], spreadsheet)
+# inserir_convite(
+#     # {'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
+#     #  'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
+#     #  'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
+#     #  'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano']
+#     #  },
+#     spreadsheet)
+# #remover_convite(['C347167', 'C761346'], spreadsheet)
