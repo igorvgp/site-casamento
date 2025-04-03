@@ -262,11 +262,10 @@ def remover_convite(ids_convites, spreadsheet):
     
 reset_all(lista_convidados, lista_nomes_convites, spreadsheet, link)
 inserir_convite(
-    {'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
-     'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
-    # 'Jéssica e Anderson': ['Jéssica Conrado', 'Anderson'],
-     'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
-     'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano']
-     },
+    # {'Alessandra e Dani': ['Alessandra Maciel', 'Daniele Silva'],
+    #  'Izabela e Lincoln': ['Izabela Carvalho', 'Lincoln Siqueira'],
+    #  'Walter e Samuel': ['Walter Junio', 'Samuel Martins'],
+    #  'Thalita e Lucas': ['Thalita Cristina', 'Lucas Adriano']
+    #  },
     spreadsheet)
 #remover_convite(['C347167', 'C761346'], spreadsheet)
