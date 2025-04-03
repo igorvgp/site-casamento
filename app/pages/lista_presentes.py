@@ -90,7 +90,7 @@ def handle_button_click(link):
     """, unsafe_allow_html=True)
 
 
-def render_product(image_path, name, price, key, link_font, font_name, spreadsheet):
+def render_product(image_path, name, price, link, key, link_font, font_name, spreadsheet):
     with open(image_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
 
@@ -128,53 +128,45 @@ def render_product(image_path, name, price, key, link_font, font_name, spreadshe
             color: #555555;
             margin-bottom: 3px;
         }}
-        </style>
-        <div class="center-container">
-            <img src="data:image/jpeg;base64,{encoded_image}" class="custom-image" alt="{name}">
-            <div class="item-name">{name}</div>
-            <div class="item-price">{price}</div>
-        </div>
-    """
-    st.markdown(html_content, unsafe_allow_html=True)
-
-    button_key = f"gift_button_{key}"  # Chave única por produto
-    if st.button("Presentear", key=button_key, use_container_width=True):
-        st.components.v1.html(f"""
-            <script>
-                window.open("https://www.google.com.br", "_blank");
-            </script>
-        """, height=0)
-
-    st.markdown("""
-        <style>
-        .stButton {
+        .button-container {{
             display: flex;
             justify-content: center;
-        }
-        .stButton>button {
-            display: inline-block;
-            padding: 7px 24px; 
-            font-size: 13px;
-            font-weight: bold;
+            align-items: center;
+            width: 100%;
+        }}
+        .custom-button {{
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 36px;  /* Aumentado */
+            font-size: 18px;     /* Aumentado */
+            font-weight: normal;
             color: white !important;
             background-color: #d2b48c;
             border: none;
             border-radius: 45px;
             text-align: center;
             cursor: pointer;
-            margin-top: 10px; 
-        }
-        .stButton>button:hover {
-            background-color: #c3a37c; 
+            margin-top: 10px;
+            text-decoration: none !important;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            min-width: 170px;  /* Um pouco maior */
+            box-shadow: none;
+        }}
+        .custom-button:hover {{
+            background-color: #c3a37c;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
+        }}
         </style>
-    """, unsafe_allow_html=True)
+        <div class="center-container">
+            <img src="data:image/jpeg;base64,{encoded_image}" class="custom-image" alt="{name}">
+            <div class="item-name">{name}</div>
+            <div class="item-price">{price}</div>
+            <a href="{link}" target="_blank" class="custom-button">Presentear</a>
+        </div>
+    """
+    st.markdown(html_content, unsafe_allow_html=True)
 
-    if button_present:
-        #handle_button_click_1("resources/images/qr_liquidificador.png", spreadsheet)
-        link = 'www.google.com'
-        handle_button_click(link)
 
 def add_background_image(image_path):
     with open(image_path, "rb") as image_file:
@@ -282,6 +274,7 @@ def lista_presentes(spreadsheet):
                         produto["path"],
                         produto["nome"],
                         produto["preco"],
+                        produto["link"],
                         f"{i+j}",  # Chave única
                         link_font,
                         font_name,
